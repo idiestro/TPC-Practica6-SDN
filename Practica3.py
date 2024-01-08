@@ -1,4 +1,5 @@
 from mininet.topo import Topo
+from mininet.link import TCLink
 
 class Practica3( Topo ):
  
@@ -19,7 +20,7 @@ class Practica3( Topo ):
     h5 = self.addHost( 'h5' )
     h6 = self.addHost( 'h6' )
     s3 = self.addSwitch( 's3' )
-    #Net 151.100.37.12
+    #Public net
     h7 = self.addHost( 'h7' )
     s2 = self.addSwitch( 's2' )
 
@@ -32,11 +33,11 @@ class Practica3( Topo ):
     self.addLink( h4, s3 )
     self.addLink( h5, s3 )
     self.addLink( h6, s3 )
-    #Net 151.100.37.12
+    #Public net
     self.addLink( h7, s2 )
 
     #Switches connection
-    self.addLink( s1, s2 )
-    self.addLink( s3, s2 )
+    self.addLink( s1, s2, cls=TCLink, bw=10 )
+    self.addLink( s2, s3, cls=TCLink, bw=10 )
 
-topos = { 'Practica3_Red': ( lambda: Practica3() ) }
+topos = { 'mytopo': ( lambda: Practica3() ) }
