@@ -1,29 +1,22 @@
-#Tabla 0
-#Permitido todo el tráfico local
+#Table 0
 table=0,ip,nw_src=10.0.2.0/24,nw_dst=10.0.2.0/24,actions=resubmit(,1) 
 table=0,arp,nw_src=10.0.2.0/24,nw_dst=10.0.2.0/24,actions=resubmit(,1)
-#Permitido tráfico con H1,H2 y H3 con dirección pública
 table=0,ip,nw_src=10.0.2.0/24,nw_dst=87.13.148.68,actions=resubmit(,1)
 table=0,icmp,nw_src=10.0.2.0/24,nw_dst=87.13.148.68,actions=resubmit(,1)
 table=0,ip,nw_src=87.13.148.68,actions=resubmit(,1)   
-#Desechado resto del tráfico
 table=0,priority=0,actions=drop
 
-#Tabla 1
-#NAT paquete salida hacia H1, H2 y H3
+#Table 1
 table=1,ip,nw_src=10.0.2.0/24, nw_dst=87.13.148.68,actions=mod_nw_src=87.100.12.18,resubmit(,2) 
-table=1,ip,nw_src=87.13.148.68,nw_dst=87.100.12.18,actions=mod_nw_dst=10.0.2.1,resubmit(,2) # debe contestar el H4 
-#Resto del tráfico no usa NAT, tráfico interno 
+table=1,ip,nw_src=87.13.148.68,nw_dst=87.100.12.18,actions=mod_nw_dst=10.0.2.1,resubmit(,2) 
 table=1,priority=0,actions=resubmit(,2) 
 
-#Tabla 2
-#puertos donde localizar a H4,H5 y H6
+#Table 2
 table=2,ip,nw_dst=10.0.2.1,actions=mod_dl_dst=00:00:00:00:00:04,output:1 
 table=2,ip,nw_dst=10.0.2.2,actions=mod_dl_dst=00:00:00:00:00:05,output:2 
 table=2,ip,nw_dst=10.0.2.3,actions=mod_dl_dst=00:00:00:00:00:06,output:3 
 table=2,priority=0,arp,nw_dst=10.0.2.1,actions=output:1 
 table=2,priority=0,arp,nw_dst=10.0.2.2,actions=output:2 
-table=2,priority=0,arp,nw_dst=10.0.2.3,actions=output:3 
-#puerto donde localizar resto mundo 
-table=2,ip,nw_dst=87.13.148.68,actions=mod_dl_dst=00:00:00:00:33:33,output:4 
-table=2,priority=0,arp,nw_dst=87.13.148.68,actions=output:4 
+table=2,priority=0,arp,nw_dst=10.0.2.3,actions=output:3
+table=2,ip,nw_dst=87.13.148.68,actions=mod_dl_dst=00:00:00:00:33:33,output:4
+table=2,priority=0,arp,nw_dst=87.13.148.68,actions=output:4
